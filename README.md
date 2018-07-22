@@ -12,6 +12,12 @@ See each .md for catogorized commands.
 
 
 	mysql -h localhost -u user_us -D database_db -p < /var/www/vhosts/domain.com/httpdocs/dump.sql
+
+	
+	find . -type f -exec grep "example" '{}' \; -print
+	find /home/username/ -name "*.log"
+
+
 	scp -r user@1.2.3.4:/path/to/foo /some/remote/directory
 	scp ~/Desktopfile.txt user@1.2.3.4:/some/remote/directory
 	scp user@1.2.3.4:/some/remote/directory/file.txt ~/Desktop
