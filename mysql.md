@@ -45,7 +45,7 @@ _Good reference with more info: [https://www.dreamvps.com/tutorials/how-to-use-m
 
 **Import MySQL dumb file:**
 
-	mysql -h localhost -u reffbuxdemo -D reffbuxdemo -p < /var/www/vhosts/reffbuxdemo.com/httpdocs/reffbux.sql
+	mysql -h localhost -u user_us -D database_db -p < /var/www/vhosts/domain.com/httpdocs/dump.sql
 
 
 **Restart MySQL:**

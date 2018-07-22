@@ -6,7 +6,12 @@ See each .md for catogorized commands.
 
 	ssh -p 12345 user@1.2.3.4
 
-	mysql -h localhost -u reffbuxdemo -D reffbuxdemo -p < /var/www/vhosts/reffbuxdemo.com/httpdocs/reffbux.sql
+	git add --all
+	git commit -m "added commands"
+	git push -u origin master
+
+
+	mysql -h localhost -u user_us -D database_db -p < /var/www/vhosts/domain.com/httpdocs/dump.sql
 	scp -r user@1.2.3.4:/path/to/foo /some/remote/directory
 	scp ~/Desktopfile.txt user@1.2.3.4:/some/remote/directory
 	scp user@1.2.3.4:/some/remote/directory/file.txt ~/Desktop
