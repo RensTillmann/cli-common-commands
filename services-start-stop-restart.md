@@ -14,9 +14,14 @@
 
 	chmod +x /etc/init.d/php-fastcgi
 	update-rc.d php-fastcgi defaults
-	/etc/init.d/php-fastcgi start
+	sudo /etc/init.d/php-fastcgi start
 
 **php5-fpm (PHP processor):**
 
-	service php5-fpm restart (if it throws an error use below):
+	sudo service php5-fpm restart (if it throws an error use below):
 	sudo pkill php5-fpm; sudo service php5-fpm start
+
+**mysql:**
+	
+	sudo service mysql restart
+	/etc/init.d/mysql restart
