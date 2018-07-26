@@ -19,3 +19,25 @@
 **With automatic password, but avoid this at all times, will be logged as plain text on server in command log:**
 
 	sshpass -p "YOUR_PASSWORD"
+
+
+**Setting up public key auth:**
+
+	# Lists the files in your .ssh directory, if they exist
+	ls -al ~/.ssh
+	
+	# Create SSH key with OpenSSH
+	ssh-keygen
+	ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
+
+	# start the ssh-agent in the background
+	eval $(ssh-agent -s)
+
+	#Add the SSH private key to the ssh-agent (replace id_rsa with the name of the private key file)
+	ssh-add ~/.ssh/id_rsa
+
+	# Copy to a server
+	ssh-copy-id -i ~/.ssh/id_rsa user@host
+
+	# Test the new key 
+	ssh -i ~/.ssh/id_rsa user@host
