@@ -2,6 +2,7 @@
 # Network sniffing: https://www.tecmint.com/12-tcpdump-commands-a-network-sniffer-tool/
 # Dovecot fail2ban: https://wiki.dovecot.org/HowTo/Fail2Ban
 # HTTP fail2ban dos attack: https://www.garron.me/en/go2linux/fail2ban-protect-web-server-http-dos-attack.html
+# tcpdump examples: https://hackertarget.com/tcpdump-examples/
 
 #block specific IP address
 #https://www.cyberciti.biz/faq/how-do-i-block-an-ip-on-my-linux-server/
