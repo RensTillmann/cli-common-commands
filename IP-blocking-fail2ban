@@ -1,3 +1,8 @@
+# Resources:
+# Network sniffing: https://www.tecmint.com/12-tcpdump-commands-a-network-sniffer-tool/
+# Dovecot fail2ban: https://wiki.dovecot.org/HowTo/Fail2Ban
+# HTTP fail2ban dos attack: https://www.garron.me/en/go2linux/fail2ban-protect-web-server-http-dos-attack.html
+
 #Monitor TCP Traffic on specific port
 tcpdump port 443 and '(tcp-syn|tcp-ack)!=0'
 
