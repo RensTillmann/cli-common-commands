@@ -3,6 +3,10 @@
 # Dovecot fail2ban: https://wiki.dovecot.org/HowTo/Fail2Ban
 # HTTP fail2ban dos attack: https://www.garron.me/en/go2linux/fail2ban-protect-web-server-http-dos-attack.html
 
+#block specific IP address
+#https://www.cyberciti.biz/faq/how-do-i-block-an-ip-on-my-linux-server/
+iptables -A INPUT -s 65.55.44.100 -j DROP
+
 #Monitor TCP Traffic on specific port
 tcpdump port 443 and '(tcp-syn|tcp-ack)!=0'
 
