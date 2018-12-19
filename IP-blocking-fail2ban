@@ -1,0 +1,11 @@
+#Monitor TCP Traffic on specific port
+tcpdump port 443 and '(tcp-syn|tcp-ack)!=0'
+
+#find most logged IP address by count:
+cat /var/log/httpd/access_log | awk '{print $1}' | sort -n | uniq -c | sort -nr | head -20
+
+#list fail2ban status
+fail2ban-client status
+
+#restart fail2ban after config/jail change
+systemctl restart fail2ban
