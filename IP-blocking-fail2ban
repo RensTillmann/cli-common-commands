@@ -4,6 +4,24 @@
 # HTTP fail2ban dos attack: https://www.garron.me/en/go2linux/fail2ban-protect-web-server-http-dos-attack.html
 # tcpdump examples: https://hackertarget.com/tcpdump-examples/
 
+# create a blacklist through IPset
+# To install it: apt-get install ipset
+ipset create blacklist hash:ip hashsize 4096
+
+# add the blacklist to your iptables rules
+iptables -I INPUT -m set --match-set blacklist src -j DROP
+iptables -I FORWARD -m set --match-set blacklist src -j DROP
+
+# check that rule is set in iptables
+iptables -L
+
+# now add the offending ip address
+ipset add blacklist 177.228.40.130
+
+# check that the ip address is in your blacklist
+ipset list blacklist
+
+
 #block specific IP address
 #https://www.cyberciti.biz/faq/how-do-i-block-an-ip-on-my-linux-server/
 iptables -A INPUT -s 65.55.44.100 -j DROP
