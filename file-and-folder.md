@@ -18,6 +18,10 @@ _Be carefull with the `f` flag, it can not be undone_
 
 **Secure copy (SCP):**
 
+**Copy folder from remote to the local host:**
+
+	scp -r -P 12345 user@1.2.3.4:/home/user/daily_backups /e/local/directory
+
 **Copy from remote to the local host:**
 
 	scp your_username@1.2.3.4:file.txt /some/local/directory
