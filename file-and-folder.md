@@ -4,7 +4,10 @@
 
 	du -sh *
 
-
+**Symlink/Junction windows folders:**
+	
+	mklink /J C:\folder\to\create C:\existing\folder\to\symlink
+	
 **Copy folder including files:**
 
 	cp -r /home/hope/files/* /home/hope/backup
