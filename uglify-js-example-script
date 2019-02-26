@@ -1,0 +1,61 @@
+const UglifyJS = require('uglify-js')
+const path = require('path')
+const fs = require('fs')
+const SRC = path.resolve(__dirname, '..', '')
+const DIST = path.resolve(__dirname, '..', '', 'dist')
+const ASSETS = '/dist'
+
+var cacheFileName = SRC+"/build/tmp/cache.json";
+var options = {
+    toplevel: true,
+    mangle: { 
+    	toplevel: true,
+    	properties: true
+    },
+    nameCache: JSON.parse(fs.readFileSync(cacheFileName, "utf8")),
+    compress: {
+        // global_defs: {
+        //     "@console.log": "alert"
+        // },
+        passes: 1
+    },
+    output: {
+        beautify: false,
+        preamble: "/* Copyright 2019 by feeling4design | @RensTillmann */"
+    }
+};
+
+var js_folder = SRC+"/assets/js/";
+
+// List all files in a directory in Node.js recursively in a synchronous fashion
+var walkSync = function(dir, filelist) {
+  var needle = 'super-forms';
+  var fs = fs || require('fs'),
+  files = fs.readdirSync(dir);
+  filelist = filelist || [];
+  files.forEach(function(file) {
+    if (fs.statSync(dir + file).isDirectory()) {
+      filelist = walkSync(dir + file + '/', filelist);
+    }else{
+      if(path.extname(file)==='.js'){
+        var slice_position = dir.indexOf(needle);
+        filelist.push({
+          path : dir.slice(slice_position+needle.length),
+          name : file
+        });
+      }
+    }
+  });
+  return filelist;
+};
+
+var files = walkSync(js_folder);
+files.forEach(function (file, index) {
+  //  var code = fs.readFileSync(file, 'utf8');
+  fs.mkdir(DIST+file.path, { recursive: true }, (err) => {
+      if (err) throw err;
+      var code = fs.readFileSync(SRC+file.path+file.name, 'utf8');
+      fs.writeFileSync(DIST+file.path+file.name, UglifyJS.minify(code, options).code, 'utf8');
+      fs.writeFileSync(cacheFileName, JSON.stringify(options.nameCache), 'utf8');
+  });
+});
