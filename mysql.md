@@ -79,11 +79,11 @@ DROP USER 'john'@'localhost';
 
 **Create new database:**
 
-	CREATE DATABASE database name;
+	CREATE DATABASE database_name;
 
 **Delete database:**
 
-	DROP DATABASE database name;
+	DROP DATABASE database_name;
 
 **Select a database to use:**
 
