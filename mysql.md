@@ -148,3 +148,17 @@ _Note that, throughout this, even if the MySQL command line won’t pay attentio
 **MySQL config:**
 
 	/etc/mysql/my.cnf
+	
+**Reset MySQL password:**
+
+	sudo service mysql stop
+	sudo mkdir /var/run/mysqld
+	sudo chown mysql: /var/run/mysqld
+	sudo mysqld_safe --skip-grant-tables --skip-networking &
+
+On another console, log in without a password:
+
+	mysql -uroot mysql
+	UPDATE mysql.user SET authentication_string=PASSWORD('YOURNEWPASSWORD'), plugin='mysql_native_password' WHERE User='root' AND Host='localhost'; EXIT;
+	sudo mysqladmin -S /var/run/mysqld/mysqld.sock shutdown
+	sudo service mysql start
