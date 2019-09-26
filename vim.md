@@ -25,8 +25,8 @@ qq
 ```
 
 #### 4) Now we must go to the number part to shrink/increase it accordingly
-  - To shrink use: `w<CTRL-a>`
-  - To increase use: `w<CTRL-x>`
+  - To shrink use: `ww<CTRL-a>`
+  - To increase use: `ww<CTRL-x>`
   
 #### 5) After shrinking/increasing we need to visually select our last search pattern, this way we can substitute the domain name
 
