@@ -6,7 +6,7 @@ For instance **newdomain.com** has a length of 13, while **myolddomain.com** has
 
 Difference in size in this case is: 13-15 = -2.
 
-This means that the sanitized string shrinks with 2 in length. Meaning a string that was 144 in size, will need to become 142.
+This means that the serialized string shrinks with 2 in length. Meaning a string that was 144 in size, will need to become 142.
 
 
 #### 1) Always start at the top of the document and at the beginning of the line
@@ -46,7 +46,7 @@ q
 999@q
 ```
 
-#### 8) Replace all other none sanitized strings with correct domain name from both http and https > https
+#### 8) Replace all other none serialized strings with correct domain name from both http and https > https
 ```
 :%s/https\{0,1}:\/\/myolddomain\.com/https:\/\/newdomain\.com/g
 ```
