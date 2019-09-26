@@ -46,9 +46,9 @@ q
 999@q
 ```
 
-#### 8) Last step is to replace all other none sanitized strings with correct domain name
+#### 8) Replace all other none sanitized strings with correct domain name from both http and https > https
 ```
-:%s/myolddomain\.com/newdomain\.com/g
+:%s/https\{0,1}:\/\/myolddomain\.com/https:\/\/newdomain\.com/g
 ```
 
 
