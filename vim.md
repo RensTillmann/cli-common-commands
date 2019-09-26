@@ -24,18 +24,16 @@ gg0
 /:\d\+:\\"[^"]*https\{0,1}:\/\/myolddomain\.com
 ```
 
-#### 4) Remember this cursor position by setting a mark, we need this later so that we do not substitute other string on the same line by mistake
-```
-ms
-```
-
-#### 5) Now we must go to the number part to shrink/increase it accordingly
+#### 4) Now we must go to the number part to shrink/increase it accordingly
   - To shrink use: `w<CTRL-a>`
   - To increase use: `w<CTRL-x>`
   
-#### 6) After shrinking/increasing we need to substitute the domain name
+#### 6) After shrinking/increasing we need to visually select our last search pattern, this way we can substitute the domain name
+
+```gn```
+
 ```
-:`s,$s/myolddomain\.com/newdomain\.com`
+:s/\%Vmyolddomain\.com/newdomain\.com
 ```
 
 #### 6) Stop recording
