@@ -1,4 +1,4 @@
-## Replace domain names from exported database that contains sanitized data
+## Replace domain names from exported database that contains serialized data
 
 Before you begin you must know the difference in size between the old domain and new domain name.
 
@@ -21,7 +21,7 @@ qq
 
 #### 3) Search for string with following regex and hit enter to find the first match (note that the below example matches both http and https
 ```
-/s:\d\+:\(\(:\d\+:\)\@!\_.\)\{-}https\{0,1}:\/\/myolddomain\.com
+/s:\d\+:\(\(:\d\+:\)\@!.\)\{-}https\{0,1}:\/\/myolddomain\.com
 ```
 
 #### 4) Now we must go to the number part to shrink/increase it accordingly
