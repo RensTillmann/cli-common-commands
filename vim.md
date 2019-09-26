@@ -15,8 +15,10 @@ This means that the sanitized string shrinks with 2 in length. Meaning a string 
 #### 2) Always start at the top of the document and at the beginning of the line
 `gg0`
 
-#### 3) Search for string with following regex and hit enter to find the first match
-`/:\d\+:\\"[^"]*https:\/\/myolddomain\.com`
+#### 3) Search for string with following regex and hit enter to find the first match (not that the below example matches both http and https
+`/:\d\+:\\"[^"]*https\{0,1}:\/\/myolddomain\.com`
+
+
 
 #### 4) Now we must go to the number part to shrink/increase it accordingly
   - To shrink use: `w<CTRL-a>`
