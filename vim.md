@@ -21,7 +21,7 @@ qq
 
 #### 3) Search for string with following regex and hit enter to find the first match (not that the below example matches both http and https
 ```
-/:\d\+:\\"[^"]*https\{0,1}:\/\/myolddomain\.com
+/:\d\+:\(\(:\d\+:\)\@!.\)*https\{0,1}:\/\/myolddomain\.com
 ```
 
 #### 4) Now we must go to the number part to shrink/increase it accordingly
