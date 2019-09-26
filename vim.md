@@ -22,22 +22,19 @@ This means that the sanitized string shrinks with 2 in length. Meaning a string 
   - To shrink use: `w<CTRL-a>`
   - To increase use: `w<CTRL-x>`
   
-#### 5) After shrinking/increasing we need to substitute the domain name for the first occurence only (this is very important). Don't forget to escape any dots (.) and slashes (/) like so `\.` and `\/`. Finally hit Enter.
-`:%s/myolddomain\.com/newdomain\.com/gc` <CR>
+#### 5) After shrinking/increasing we need to substitute the domain name
+`:s/myolddomain\.com/newdomain\.com`
 
-#### 6) Now from the prompt we choose [l]=Last; make this change and then quit.
-`l`
-
-#### 7) Stop recording
+#### 6) Stop recording
 `q`
 
-#### 8) Execute macro X amount of times
-`99999@q`
+#### 7) Execute macro X amount of times
+`999@q`
 
-#### 9) After the macro finished executing, execute the macro again until all the domains have been replaced accordingly.
+#### 8) After the macro finished executing, execute the macro again until all the domains have been replaced accordingly.
 
 _This is a step that is required because a sanitized string might contain multiple domain names, and the macro only replaces 1 on each execution._
 
-`99999@q`
-`99999@q`
-`99999@q`
+`999@q`
+`999@q`
+`999@q`
