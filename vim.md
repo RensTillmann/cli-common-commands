@@ -1,9 +1,13 @@
 ## Replace domain names from exported database that contains sanitized data
 
 Before you begin you must know the difference in size between the old domain and new domain name.
+
 For instance **newdomain.com** has a length of 13, while **myolddomain.com** has a length of 15.
+
 Difference in size in this case is: 13-15 = -2.
+
 This means that the sanitized string shrinks with 2 in length. Meaning a string that was 144 in size, will need to become 142.
+
 
 #### 1) Record new macro
 `qq`
