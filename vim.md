@@ -21,7 +21,7 @@ qq
 
 #### 3) Search for string with following regex and hit enter to find the first match (note that the below example matches both http and https
 ```
-/s:\d\+:\(\(:\d\+:\)\@!.\)\{-}https\{0,1}:\/\/myolddomain\.com
+/s:\d\+:\(\(:\d\+:\)\@!.\)\{-}\/\/myolddomain\.com
 ```
 
 #### 4) Now we must go to the number part to shrink/increase it accordingly
@@ -46,9 +46,17 @@ q
 999@q
 ```
 
-#### 8) Replace all other none serialized strings with correct domain name from both http and https > https
+#### 8) OPTIONAL: if a website was developed in a subdirectory and used relative URLs to link to pages you can check for any links that need to be updated (it's best to use /c to confirm each replacement)
 ```
-:%s/https\{0,1}:\/\/myolddomain\.com/https:\/\/newdomain\.com/g
+gg0
+qq
+/s:\d\+:\(\(:\d\+:\)\@!.\)\{-}\/subdirectoryname\/
+- To shrink use: `ww<CTRL-a>`
+- To increase use: `ww<CTRL-x>`
+gn
+:s/\%V\/subdirectoryname\//\//c
+q
+999@q
 ```
 
 
