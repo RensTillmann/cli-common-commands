@@ -9,14 +9,14 @@ Difference in size in this case is: 13-15 = -2.
 This means that the sanitized string shrinks with 2 in length. Meaning a string that was 144 in size, will need to become 142.
 
 
-#### 1) Record new macro
-```
-qq
-```
-
-#### 2) Always start at the top of the document and at the beginning of the line
+#### 1) Always start at the top of the document and at the beginning of the line
 ```
 gg0
+```
+
+#### 2) Record new macro
+```
+qq
 ```
 
 #### 3) Search for string with following regex and hit enter to find the first match (not that the below example matches both http and https
@@ -28,7 +28,7 @@ gg0
   - To shrink use: `w<CTRL-a>`
   - To increase use: `w<CTRL-x>`
   
-#### 6) After shrinking/increasing we need to visually select our last search pattern, this way we can substitute the domain name
+#### 5) After shrinking/increasing we need to visually select our last search pattern, this way we can substitute the domain name
 
 ```gn```
 
@@ -41,17 +41,14 @@ gg0
 q
 ```
 
-#### 7) Execute macro X amount of times
+#### 7) Execute macro X amount of times until all domains have been replaced accordingly
 ```
 999@q
 ```
 
-#### 8) After the macro finished executing, execute the macro again until all the domains have been replaced accordingly.
-
-_This is a step that is required because a sanitized string might contain multiple domain names, and the macro only replaces 1 on each execution._
-
+#### 8) Last step is to replace all other none sanitized strings with correct domain name
 ```
-999@q
-999@q
-999@q
+:%s/myolddomain\.com/newdomain\.com/g
 ```
+
+
