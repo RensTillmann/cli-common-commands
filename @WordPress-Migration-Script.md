@@ -1,36 +1,58 @@
 # WordPres Site Migration Script
 
+## Quick search replace placeholders
+
+```txt
+<USER> : clientname/username
+<DB_NAME> : db_name
+<DB_USER> : db_user
+<DB_PASS> : db_pass
+<IP> : IP-address of the remote server
+```
+
+## Create files to store passwords
+
+```ssh
+vim /home/<USER>/.password
+chmod 440 /home/<USER>/.password
+```
+
+## Create file **~/.my.cnf** (on both servers) with DB passwords, which is used by our shell script to make a dump and do the import.
+
+```
+# Do this on both servers
+vim ~/.my.cnf
+[mysqldump]
+user=<DB_USER>
+password=<DB_PASS>
+[mysql]
+user=<DB_USER>
+password=<DB_PASS>
+```
+
 ```
 vim wp-migration.sh
 chmod +x wp-migration.sh
-./wp-migration.sh --source=/home/XXXXX/public_html/ \
-                  --remote-host=root@XX.XXX.XX.XXX \
+./wp-migration.sh --source=/home/<USER>/public_html/ \
+                  --remote-host=root@<IP> \
                   --destination-path=/var/www/html/ \
-                  --ssh-pass=/home/XXXXX/.password \
+                  --ssh-pass=/home/<USER>/.password \
                   --dump-file=dump.sql \
-                  --db-name=XXXXX_db \
-                  --db-user=XXXXX_us
+                  --db-name=<DB_NAME> \
+                  --db-user=<DB_USER>
 ```
 
 ```shell
 #!/bin/sh
 
-SOURCE="/home/XXXXX/public_html/"   # files to copy to the remote server
-REMOTE_HOST="root@XX.XXX.XX.XXX"    # the host to connect to
-DESTINATION_PATH="/var/www/html/"   # remote host destination path to move the files into
-SSH_PASS="/home/XXXXX/.password"    # password file location
-DUMP_FILE="dump.sql"                # mysql dump filename
-DB_NAME="XXXXX_db"                  # database name
-DB_USER="XXXXX_us"                  # database username
-IMPORT="false"                      # only used on remote connection when importing dump file :)
-
-#./wp-migration.sh --source=/home/XXXXX/public_html/ \
-#                  --remote-host=root@XX.XXX.XX.XXX \
-#                  --destination-path=/var/www/html/ \
-#                  --ssh-pass=/home/XXXXX/.password \
-#                  --dump-file=dump.sql \
-#                  --db-name=XXXXX_db \
-#                  --db-user=XXXXX_us
+SOURCE="/home/<USER>/public_html/"    # files to copy to the remote server
+REMOTE_HOST="root@<IP>"               # the host to connect to
+DESTINATION_PATH="/var/www/html/"     # remote host destination path to move the files into
+SSH_PASS="/home/<USER>/.password"     # password file location
+DUMP_FILE="dump.sql"                  # mysql dump filename
+DB_NAME="<DB_NAME>"                   # database name
+DB_USER="<DB_USER>"                   # database username
+IMPORT="false"                        # only used on remote connection when importing dump file :)
 
 function usage()
 {
@@ -123,17 +145,6 @@ vm.swappiness=10
 sudo sysctl vm.vfs_cache_pressure=50
 sudo vim /etc/sysctl.conf
 vm.vfs_cache_pressure=50
-```
-
-Create file **~/.my.cnf** (on both servers) with DB passwords, which is used by our shell script to make a dump and do the import.
-
-```bash
-[mysqldump]
-user=root
-password=password
-[mysql]
-user=root
-password=password
 ```
 
 ## 1. Add swap if necessary
