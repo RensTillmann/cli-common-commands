@@ -22,6 +22,7 @@ chmod 440 /home/<USER>/.password
 ```
 # Do this on both servers
 vim ~/.my.cnf
+chmod 440 ~/.my.cnf
 [mysqldump]
 user=<DB_USER>
 password=<DB_PASS>
@@ -94,6 +95,8 @@ then
     cd $DESTINATION_PATH;
     pv $DUMP_FILE | mysql -u root wordpress;
     chown www-data:www-data -R *;
+    # Remove database dump file from remote server
+    rm -rf $DUMP_FILE
     exit;
 fi
 
@@ -120,7 +123,7 @@ echo "Importing dump file on destination server...";
 sshpass -P passphrase -f $SSH_PASS ssh $REMOTE_HOST "bash -s" -- < importdb.sh "--import=true"
 echo "Dump file imported!";
 
-# Remove database dump file
+# Remove database dump file from local server
 rm -rf $DUMP_FILE
 exit;
 
