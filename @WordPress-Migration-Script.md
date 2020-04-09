@@ -1,5 +1,17 @@
 # WordPres Site Migration Script
 
+```
+vim wp-migration.sh
+chmod +x wp-migration.sh
+./wp-migration.sh --source=/home/XXXXX/public_html/ \
+                  --remote-host=root@XX.XXX.XX.XXX \
+                  --destination-path=/var/www/html/ \
+                  --ssh-pass=/home/XXXXX/.password \
+                  --dump-file=dump.sql \
+                  --db-name=XXXXX_db \
+                  --db-user=XXXXX_us
+```
+
 ```shell
 #!/bin/sh
 
@@ -85,6 +97,10 @@ echo "Syncing completed!";
 echo "Importing dump file on destination server...";
 sshpass -P passphrase -f $SSH_PASS ssh $REMOTE_HOST "bash -s" -- < importdb.sh "--import=true"
 echo "Dump file imported!";
+
+# Remove database dump file
+rm -rf $DUMP_FILE
+exit;
 
 ```
 
