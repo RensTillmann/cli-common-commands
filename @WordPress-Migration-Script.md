@@ -1,88 +1,27 @@
 # WordPres Site Migration Script
 
-## Quick search replace placeholders
-
-```txt
-<USER> : clientname/username
-<DB_NAME> : db_name
-<DB_USER> : db_user
-<DB_PASS> : db_pass
-<IP> : IP-address of the remote server
-```
-
-## Create files to store passwords
-
-```ssh
-vim /home/<USER>/.password
-chmod 440 /home/<USER>/.password
-```
-
-## Create file **~/.my.cnf** (on both servers) with DB passwords, which is used by our shell script to make a dump and do the import.
-
-```
-# Do this on both servers
-vim ~/.my.cnf
-chmod 440 ~/.my.cnf
-[mysqldump]
-user=<DB_USER>
-password=<DB_PASS>
-[mysql]
-user=<DB_USER>
-password=<DB_PASS>
-```
-
-```
-vim wp-migration.sh
-chmod +x wp-migration.sh
-./wp-migration.sh --source=/home/<USER>/public_html/ \
-                  --remote-host=root@<IP> \
-                  --destination-path=/var/www/html/ \
-                  --ssh-pass=/home/<USER>/.password \
-                  --dump-file=dump.sql \
-                  --db-name=<DB_NAME> \
-                  --db-user=<DB_USER>
-```
-
 ```shell
 #!/bin/sh
 
-SOURCE="/home/<USER>/public_html/"    # files to copy to the remote server
-REMOTE_HOST="root@<IP>"               # the host to connect to
-DESTINATION_PATH="/var/www/html/"     # remote host destination path to move the files into
-SSH_PASS="/home/<USER>/.password"     # password file location
-DUMP_FILE="dump.sql"                  # mysql dump filename
-DB_NAME="<DB_NAME>"                   # database name
-DB_USER="<DB_USER>"                   # database username
-IMPORT="false"                        # only used on remote connection when importing dump file :)
-
-function usage()
-{
-    echo "Usage: $0 --db-path"
-    echo "\t-h --help"
-    echo "\t--source=$SOURCE"
-    echo "\t--remote-host=$REMOTE_HOST"
-    echo "\t--destination-path=$DESTINATION_PATH"
-    echo "\t--ssh-pass=$SSH_PASS"
-    echo "\t--dump-file=$DUMP_FILE"
-    echo "\t--db-name=$DB_NAME"
-    echo "\t--db-user=$DB_USER"
-    echo "\t--import=$IMPORT"
-    echo ""
-}
+CONFIG_FILE=".my.cnf"
+SOURCE="/home/<USER>/public_html/"      # files to copy to the remote server
+REMOTE_HOST="root@XX.XXX.XX.XXX"        # the host to connect to
+DESTINATION_PATH="/var/www/html/"       # remote host destination path to move the files into
+SSH_PASS_FILE=".tmp_ssh_pass"           # password file location
+SSH_PASS="<PASSWORD>"                   # password file location
+DUMP_FILE="dump.sql"                    # mysql dump filename
+DB_NAME="<DBNAME>"                      # database name
+DB_USER="<DBUSER>"                      # database username
+DB_PASS="<DBPASS>"                      # database pass
+DB_NAME_D="wordpress"                   # database name destination server
+DB_USER_D="wordpress"                   # database username destination server
+DB_PASS_D="XXXXXXXXX"                   # database pass destination server
+IMPORT="false"                          # only used on remote connection when importing dump file :)
 
 while [ "$1" != "" ]; do
     PARAM=`echo $1 | awk -F= '{print $1}'`
     VALUE=`echo $1 | awk -F= '{print $2}'`
     case $PARAM in
-        -h | --help) usage exit ;;
-        --source) SOURCE=$VALUE ;;
-        --remote-host) REMOTE_HOST=$VALUE ;;
-        --destination-path) DESTINATION_PATH=$VALUE ;;
-        --ssh-pass) SSH_PASS=$VALUE ;;
-        --dump-file) DUMP_FILE=$VALUE ;;
-        --db-name) DB_NAME=$VALUE ;;
-        --db-user) DB_USER=$VALUE ;;
-        --db-path) DB_PATH=$VALUE ;;
         --import) IMPORT=$VALUE ;;
         *) echo "ERROR: unknown parameter \"$PARAM\""; usage exit 1 ;;
     esac
@@ -91,145 +30,97 @@ done
 
 if [ "$IMPORT" == "true" ]
 then
+    echo "Creating $CONFIG_FILE on destination server";
+    cd ~/
+    touch $CONFIG_FILE
+    echo "[mysqldump]
+    user=$DB_USER_D
+    password=$DB_PASS_D
+    [mysql]
+    user=$DB_USER_D
+    password=$DB_PASS_D" > $CONFIG_FILE
+    chmod 440 $CONFIG_FILE
+
     echo "Importing database...";
     cd $DESTINATION_PATH;
-    pv $DUMP_FILE | mysql -u root wordpress;
-    chown www-data:www-data -R *;
+    pv $DUMP_FILE | mysql -u $DB_USER_D $DB_NAME_D;
+    echo "Database imported!";
     # Remove database dump file from remote server
     rm -rf $DUMP_FILE
+    # Remove config file
+    cd ~/
+    rm -rf $CONFIG_FILE
+    echo "Dump file and config file deleted!";
+
+    # Set correct WordPress folder/file permissions
+    # Reset to safe defaults
+    echo "Changing ownership for folders and files...";
+    find . -exec chown www-data:www-data {} \;
+    echo "Changing permissions for directories to 750...";
+    find . -type d -exec chmod 750 {} \;
+    echo "Changing permissions for files to 640...";
+    find . -type f -exec chmod 640 {} \;
+    # Allow wordpress to manage wp-config.php (but prevent world access)
+    echo "Changing group for wp-config.php file to www-data";
+    chgrp www-data ./wp-config.php
+    echo "Changing permission for wp-config.php to 400";
+    chmod 400 ./wp-config.php
+    # Allow wordpress to manage wp-content
+    #echo "Changing group for wp-content to www-data";
+    #find ./wp-content -exec chgrp www-data {} \;
+    #echo "Changing permissions for directories inside wp-content to 750";
+    #find ./wp-content -type d -exec chmod 750 {} \;
+    #echo "Changing permissions for files inside wp-content to 640";
+    #find ./wp-content -type f -exec chmod 640 {} \;
+    # Perform graceful restart (zero downtime)
+    # other commands can be found here: https://openlitespeed.org/kb/command-references-for-administration/
+    echo "Gracefully restarting LSWS...";
+    /usr/local/lsws/bin/lswsctrl restart
+    echo "Graceful restart completed!";
     exit;
 fi
 
-#echo "--source=$SOURCE";
-#echo "--remote-host=$REMOTE_HOST";
-#echo "--destination-path=$DESTINATION_PATH";
-#echo "--ssh-pass=$SSH_PASS";
-#echo "--dump-file=$DUMP_FILE";
-#echo "--db-name=$DB_NAME";
-#echo "--db-user=$DB_USER";
-#echo "--import=$IMPORT";
-#exit;
+echo "Creating $CONFIG_FILE file on source server";
+cd ~/
+touch $CONFIG_FILE
+echo "[mysqldump]
+user=$DB_USER
+password=$DB_PASS
+[mysql]
+user=$DB_USER
+password=$DB_PASS" > $CONFIG_FILE
+chmod 440 $CONFIG_FILE
 
-echo "Creating MySQL dump file... user/pass stored in '~/.my.cnf'";
+echo "Creating MySQL dump file... user/pass stored in '$CONFIG_FILE'";
 sleep 3
+cd $SOURCE
 mysqldump --verbose -u $DB_USER $DB_NAME > $DUMP_FILE
 echo "Dump completed!";
 
+echo "Creating $CONFIG_FILE file on source server";
+cd ~/
+touch $SSH_PASS_FILE
+echo "$SSH_PASS" > $SSH_PASS_FILE
+chmod 440 $SSH_PASS_FILE
+
 echo "Started syncing files from local to remote server...";
-sshpass -P passphrase -f $SSH_PASS rsync --delete --exclude=wp-config.php --exclude=rsync_script.sh -azvv -e ssh $SOURCE $REMOTE_HOST:$DESTINATION_PATH
+sshpass -P passphrase -f ~/$SSH_PASS_FILE rsync --delete -azvv -e ssh $SOURCE $REMOTE_HOST:$DESTINATION_PATH
+#sshpass -P passphrase -f ~/$SSH_PASS_FILE rsync --delete --exclude=wp-config.php -azvv -e ssh $SOURCE $REMOTE_HOST:$DESTINATION_PATH
+#sshpass -p $SSH_PASS rsync --delete --exclude=wp-config.php -azvv -e ssh $SOURCE $REMOTE_HOST:$DESTINATION_PATH
 echo "Syncing completed!";
 
 echo "Importing dump file on destination server...";
-sshpass -P passphrase -f $SSH_PASS ssh $REMOTE_HOST "bash -s" -- < importdb.sh "--import=true"
-echo "Dump file imported!";
+sshpass -P passphrase -f ~/$SSH_PASS_FILE ssh $REMOTE_HOST "bash -s" -- < $0 "--import=true"
+#sshpass -p $SSH_PASS ssh $REMOTE_HOST "bash -s" -- < $0 "--import=true"
 
 # Remove database dump file from local server
+echo "Cleaning up dump file and config file on source server";
+cd $SOURCE
 rm -rf $DUMP_FILE
+# Remove config file
+cd ~/
+rm -rf $CONFIG_FILE
+echo "All done!";
 exit;
-
-```
-
-## Quick commands (for quick usage if you know what you are doing):
-
-Add Swap Space:
-
-```bash
-df -h
-sudo fallocate -l 1G /swapfile
-ls -lh /swapfile
-sudo chmod 600 /swapfile
-sudo mkswap /swapfile
-sudo swapon /swapfile
-sudo cp /etc/fstab /etc/fstab.bak
-echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
-sudo sysctl vm.swappiness=10
-sudo vim /etc/sysctl.conf
-vm.swappiness=10
-sudo sysctl vm.vfs_cache_pressure=50
-sudo vim /etc/sysctl.conf
-vm.vfs_cache_pressure=50
-```
-
-## 1. Add swap if necessary
-
-1.1 Check if the system has any configured Swap
-
-```bash
-sudo swapon --show
-```
-
-1.2 Verify that there is no active Swap
-
-```bash
-free -h
-```
-
-1.3 Create swap file on an existing partition, find the current disk
-
-Example: **/dev/vda1**
-
-```bash
-df -h
-```
-
-1.4 Create a Swap file
-
-```bash
-sudo fallocate -l 1G /swapfile
-```
-
-1.5 Verify that the correct amount of space was reserved:
-
-```bash
-ls -lh /swapfile
-```
-
-1.6 Make the file only accessible to root by typing:
-
-```bash
-sudo chmod 600 /swapfile
-```
-
-1.7 Verify the permissions:
-
-```bash
-ls -lh /swapfile
-```
-
-1.8 Mark the file as swap space:
-
-```bash
-sudo mkswap /swapfile
-```
-
-1.9 Enable the swap file:
-
-```bash
-sudo swapon /swapfile
-```
-
-1.10 Verify that the swap is available:
-
-```bash
-sudo swapon --show
-free -h
-```
-
-1.11 Make the Swap File Permanent
-
-```bash
-sudo cp /etc/fstab /etc/fstab.bak
-echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
-```
-
-1.12 Tweak Swap Settings
-
-```bash
-sudo sysctl vm.swappiness=10
-sudo vim /etc/sysctl.conf
-vm.swappiness=10
-
-sudo sysctl vm.vfs_cache_pressure=50
-sudo vim /etc/sysctl.conf
-vm.vfs_cache_pressure=50
+    
 ```
