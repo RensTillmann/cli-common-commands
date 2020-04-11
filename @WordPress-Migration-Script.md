@@ -3,19 +3,37 @@
 ```shell
 #!/bin/sh
 
+echo "Home dir [source] e.g: /home/user1/public_html/: "
+read -e HOMEDIR
+echo "Database Name [source]: "
+read -e DB_NAME
+echo "Database User [source]: "
+read -e DB_USER
+echo "Database Password [source]: "
+read -s DB_PASS
+echo "Database Name [destination]: "
+read -e DB_NAME_D
+echo "Database User [destination]: "
+read -e DB_USER_D
+echo "Database Password [destination]: "
+read -s DB_PASS_D
+
+echo "Remote host  e.g: root@XX.XXX.XX.XXX: "
+read -e REMOTE_HOST
+echo "Remote path e.g: /var/www/html/: "
+read -e REMOTE_PATH
+echo "Authentication password: "
+read -s SSH_PASS
+
+echo "Confirm Migration (y/n): "
+read -e RUN
+if [ "$RUN" == n ] then
+    exit
+fi
+
 CONFIG_FILE=".my.cnf"
-SOURCE="/home/<USER>/public_html/"      # files to copy to the remote server
-REMOTE_HOST="root@XX.XXX.XX.XXX"        # the host to connect to
-DESTINATION_PATH="/var/www/html/"       # remote host destination path to move the files into
 SSH_PASS_FILE=".tmp_ssh_pass"           # password file location
-SSH_PASS="<PASSWORD>"                   # password file location
 DUMP_FILE="dump.sql"                    # mysql dump filename
-DB_NAME="<DBNAME>"                      # database name
-DB_USER="<DBUSER>"                      # database username
-DB_PASS="<DBPASS>"                      # database pass
-DB_NAME_D="wordpress"                   # database name destination server
-DB_USER_D="wordpress"                   # database username destination server
-DB_PASS_D="XXXXXXXXX"                   # database pass destination server
 IMPORT="false"                          # only used on remote connection when importing dump file :)
 
 while [ "$1" != "" ]; do
@@ -42,7 +60,7 @@ then
     chmod 440 $CONFIG_FILE
 
     echo "Importing database...";
-    cd $DESTINATION_PATH;
+    cd $REMOTE_PATH;
     pv $DUMP_FILE | mysql -u $DB_USER_D $DB_NAME_D;
     echo "Database imported!";
     # Remove database dump file from remote server
@@ -93,7 +111,7 @@ chmod 440 $CONFIG_FILE
 
 echo "Creating MySQL dump file... user/pass stored in '$CONFIG_FILE'";
 sleep 3
-cd $SOURCE
+cd $HOMEDIR
 mysqldump --verbose -u $DB_USER $DB_NAME > $DUMP_FILE
 echo "Dump completed!";
 
@@ -104,9 +122,9 @@ echo "$SSH_PASS" > $SSH_PASS_FILE
 chmod 440 $SSH_PASS_FILE
 
 echo "Started syncing files from local to remote server...";
-sshpass -P passphrase -f ~/$SSH_PASS_FILE rsync --delete -azvv -e ssh $SOURCE $REMOTE_HOST:$DESTINATION_PATH
-#sshpass -P passphrase -f ~/$SSH_PASS_FILE rsync --delete --exclude=wp-config.php -azvv -e ssh $SOURCE $REMOTE_HOST:$DESTINATION_PATH
-#sshpass -p $SSH_PASS rsync --delete --exclude=wp-config.php -azvv -e ssh $SOURCE $REMOTE_HOST:$DESTINATION_PATH
+sshpass -P passphrase -f ~/$SSH_PASS_FILE rsync --delete -azvv -e ssh $HOMEDIR $REMOTE_HOST:$REMOTE_PATH
+#sshpass -P passphrase -f ~/$SSH_PASS_FILE rsync --delete --exclude=wp-config.php -azvv -e ssh $HOMEDIR $REMOTE_HOST:$REMOTE_PATH
+#sshpass -p $SSH_PASS rsync --delete --exclude=wp-config.php -azvv -e ssh $HOMEDIR $REMOTE_HOST:$REMOTE_PATH
 echo "Syncing completed!";
 
 echo "Importing dump file on destination server...";
@@ -115,7 +133,7 @@ sshpass -P passphrase -f ~/$SSH_PASS_FILE ssh $REMOTE_HOST "bash -s" -- < $0 "--
 
 # Remove database dump file from local server
 echo "Cleaning up dump file and config file on source server";
-cd $SOURCE
+cd $HOMEDIR
 rm -rf $DUMP_FILE
 # Remove config file
 cd ~/
