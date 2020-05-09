@@ -120,8 +120,6 @@ iptables -A OUTPUT  -p tcp --source-port 27017 -m state --state ESTABLISHED -j A
 
 ```
 mongo -u sampledb_us -p sampledb_us_password <ip>/sampledb
-
-
 ```
 
 **After authenticated as administrator, you can create additional users:**
