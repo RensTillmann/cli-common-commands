@@ -152,5 +152,5 @@ db.foo.insert( { x: 1, y: 1 } )
 **Example URI to connect to mongodb server via drivers:**
 
 ```
-mongodb://USER:PASSWORD@api.super-forms.com:27017/?authSource=DBNAME&readPreference=primary&appname=MyApp&ssl=false
+mongodb://USER:PASSWORD@localhost:27017/?authSource=DBNAME&readPreference=primary&appname=MyApp&ssl=false
 ```
