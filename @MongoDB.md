@@ -1,5 +1,17 @@
 # CLI commands for mongod:
 
+**Start MongoDB without access control:**
+
+```
+mongod --port 27017 --dbpath /var/lib/mongodb
+```
+
+**In new shell:**
+
+```
+mongo --port 27017
+```
+
 **Create Admin user:**
 
 ```
@@ -28,6 +40,12 @@ db.createUser({
 });
 ```
 
+**Shut down MongoDB instance with access control**
+
+```
+db.adminCommand( { shutdown: 1 } )
+```
+
 **Enable MongoDB Auth:**
 
 ```
@@ -36,6 +54,12 @@ vim /etc/mongod.conf
 security:
     authorization: 'enabled'
 
+```
+
+(or via command line):
+
+```
+mongod --auth --port 27017 --dbpath /var/lib/mongodb
 ```
 
 
@@ -70,6 +94,17 @@ mongo -u admin -p myadminpassword 127.0.0.1/admin
 
 ```
 mongo -u sampledb_us -p user1password 127.0.0.1/sampledb
+
+OR:
+
+mongo --port 27017  --authenticationDatabase "admin" -u "myUserAdmin" -p
+
+OR:
+
+mongo --port 27017
+use admin
+db.auth("myUserAdmin", passwordPrompt()) // or cleartext password
+
 ```
 
 ## Connecting remotely:
@@ -85,4 +120,28 @@ iptables -A OUTPUT  -p tcp --source-port 27017 -m state --state ESTABLISHED -j A
 
 ```
 mongo -u sampledb_us -p sampledb_us_password <ip>/sampledb
+
+
+```
+
+**After authenticated as administrator, you can create additional users:**
+
+```
+use test
+db.createUser(
+  {
+    user: "myTester",
+    pwd:  passwordPrompt(),   // or cleartext password
+    roles: [ { role: "readWrite", db: "test" },
+             { role: "read", db: "reporting" } ]
+  }
+)
+```
+
+**Login as the newly created user, and try to insert a document for testing:**
+
+```
+mongo --port 27017 -u "myTester" --authenticationDatabase "test" -p
+
+db.foo.insert( { x: 1, y: 1 } )
 ```
