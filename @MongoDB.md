@@ -12,30 +12,28 @@ mongod --port 27017 --dbpath /var/lib/mongodb
 mongo --port 27017
 ```
 
-**Create Admin user:**
+**Create Admin and DB users:**
 
 ```
+use admin
 db.createUser({
   user: "admin",
-  pwd: "myadminpassword",
+  pwd: passwordPrompt(),
   roles: [
     { role: "userAdminAnyDatabase", db: "admin" },
     { role: "readWriteAnyDatabase", db: "admin" },
     { role: "dbAdminAnyDatabase",   db: "admin" }
   ]
 });
-```
 
-**Create DB User:**
-
-```
+use dbname
 db.createUser({
-  user: "sampledb_us",
-  pwd: "sampledb_us_password",
+  user: "db_us",
+  pwd: passwordPrompt(),
   roles: [
-    { role: "userAdmin", db: "sampledb" },
-    { role: "dbAdmin",   db: "sampledb" },
-    { role: "readWrite", db: "sampledb" }
+    { role: "userAdmin", db: "dbname" },
+    { role: "dbAdmin",   db: "dbname" },
+    { role: "readWrite", db: "dbname" }
   ]
 });
 ```
