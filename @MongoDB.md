@@ -26,14 +26,14 @@ db.createUser({
   ]
 });
 
-use dbname
+use DBNAME
 db.createUser({
-  user: "db_us",
+  user: "USER",
   pwd: passwordPrompt(),
   roles: [
-    { role: "userAdmin", db: "dbname" },
-    { role: "dbAdmin",   db: "dbname" },
-    { role: "readWrite", db: "dbname" }
+    { role: "userAdmin", db: "DBNAME" },
+    { role: "dbAdmin",   db: "DBNAME" },
+    { role: "readWrite", db: "DBNAME" }
   ]
 });
 ```
@@ -92,23 +92,23 @@ chown -R mongodb:mongodb /var/lib/mongodb/
 **Logging into the `admin` database:**
 
 ```
-mongo -u admin -p myadminpassword 127.0.0.1/admin
+mongo -u admin -p PASSWORD 127.0.0.1/admin
 ```
 
 **Logging into other database:**
 
 ```
-mongo -u sampledb_us -p user1password 127.0.0.1/sampledb
+mongo -u USER -p PASSWORD 127.0.0.1/DBNAME
 
 OR:
 
-mongo --port 27017  --authenticationDatabase "admin" -u "myUserAdmin" -p
+mongo --port 27017  --authenticationDatabase "DBNAME" -u "USER" -p
 
 OR:
 
 mongo --port 27017
-use admin
-db.auth("myUserAdmin", passwordPrompt()) // or cleartext password
+use DBNAME
+db.auth("USER", passwordPrompt()) // or cleartext password
 
 ```
 
@@ -124,19 +124,19 @@ iptables -A OUTPUT  -p tcp --source-port 27017 -m state --state ESTABLISHED -j A
 **Testing remote connection:**
 
 ```
-mongo -u sampledb_us -p sampledb_us_password <ip>/sampledb
+mongo -u USER -p PASSWORD <IP-ADDRESS>/DBNAME
 ```
 
 **After authenticated as administrator, you can create additional users:**
 
 ```
-use test
+use DBNAME
 db.createUser(
   {
-    user: "myTester",
+    user: "USER",
     pwd:  passwordPrompt(),   // or cleartext password
-    roles: [ { role: "readWrite", db: "test" },
-             { role: "read", db: "reporting" } ]
+    roles: [ { role: "readWrite", db: "DBNAME" },
+             { role: "read", db: "OTHERDBNAME" } ]
   }
 )
 ```
@@ -144,7 +144,7 @@ db.createUser(
 **Login as the newly created user, and try to insert a document for testing:**
 
 ```
-mongo --port 27017 -u "myTester" --authenticationDatabase "test" -p
+mongo --port 27017 -u "USER" --authenticationDatabase "DBNAME" -p
 
 db.foo.insert( { x: 1, y: 1 } )
 ```
