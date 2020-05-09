@@ -80,6 +80,13 @@ net:
 ```
 systemctl restart mongod.service
 service mongod restart
+chown -R mongodb:mongodb /var/lib/mongodb/
+```
+
+**If you can't restart because of permission errors run the following:**
+
+```
+chown -R mongodb:mongodb /var/lib/mongodb/
 ```
 
 **Logging into the `admin` database:**
