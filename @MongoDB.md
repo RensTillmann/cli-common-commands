@@ -3,6 +3,7 @@
 **Start MongoDB without access control:**
 
 ```
+systemctl stop mongod
 mongod --port 27017 --dbpath /var/lib/mongodb
 ```
 
@@ -12,9 +13,17 @@ mongod --port 27017 --dbpath /var/lib/mongodb
 mongo --port 27017
 ```
 
-**Create Admin and DB users:**
+**Create Root, Admin and DB users:**
 
 ```
+db.createUser(
+  {
+    user: "superuser",
+    pwd: "changeMeToAStrongPassword",
+    roles: [ "root" ]
+  }
+)
+
 use admin
 db.createUser({
   user: "admin",
