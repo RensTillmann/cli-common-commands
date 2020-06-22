@@ -1,5 +1,172 @@
 # CLI commands for mongod:
 
+**Deploy Replica Set:**
+
+```
+# Spin up nodes with docker installed
+# Configure host files on all the nodes so they can communicate with eachother
+vim /etc/hosts
+10.92.250.100 mongodb0
+10.92.250.101 mongodb1
+10.92.250.102 mongodb2
+
+# Start mongo on all nodes
+docker run -d -p 27017:27017 -v data:/data/db mongo --replSet "rs0"
+
+# Login to mongo
+mongo --host mongodb0:27017 OR: mongo mongodb://mongodb0:27017
+
+# Check replicaset status
+rs.status()
+
+# Initiate replica set
+rs.initiate( {
+   _id : "rs0",
+   members: [
+      { _id: 0, host: "mongodb0:27017" },
+      { _id: 1, host: "mongodb1:27017" },
+      { _id: 2, host: "mongodb2:27017" }
+   ]
+})
+
+# Check replicaset status
+rs.status()
+
+# Connect to the replica set (rs0)
+mongo 'mongodb://mongodb0,mongodb1,mongodb2/?replicaSet=rs0'
+
+# Show status and info
+rs.status()
+rs.printReplicationInfo()
+rs.getReplicationInfo()
+rs.conf()
+
+# Test replication
+db.createCollection("helloworld")
+show collections
+exit
+mongo mongodb://mongodb2
+rs.slaveOk()
+show dbs
+show collections
+
+# Test failover
+-- Login on current primary node e.g mongodb0
+docker ps
+docker stop mongo
+exit
+-- Connect to the replica set (rs0)
+mongo 'mongodb://mongodb0,mongodb1,mongodb2/?replicaSet=rs0'
+rs.status()
+-- Restart mongo on primary node e.g mongodb0
+docker ps -a
+docker start mongo
+docker ps
+exit
+-- Reconnect to the replica set (rs0)
+mongo 'mongodb://mongodb0,mongodb1,mongodb2/?replicaSet=rs0'
+rs.status()
+
+# When everything is setup, we should enable authentication!
+
+```
+
+**Authentication, users and roles:**
+
+```
+# Run mongo instance
+docker run --name mongo -d -p 27017:27017 -v data:/data/db mongo
+netstat -nltp
+# Confirm it is running
+docker ps
+mongo
+show dbs
+use admin
+show users
+show roles
+
+# Create admin user
+use admin
+db.createUser(
+  {
+    user: "myUserAdmin",
+    pwd: passwordPrompt(), // or cleartext password
+    roles: [ { role: "userAdminAnyDatabase", db: "admin" }, "readWriteAnyDatabase" ]
+  }
+)
+show users
+exit
+
+docker ps
+docker stop mongo
+docker rm mongo
+
+docker run --name mongo -d -p 27017:27017 -v data:/data/db mongo --auth
+# LOGIN Method 1:
+mongo -u myUserAdmin -p
+# OR with auth db specified:
+mongo -u myUserAdmin -p --authenticationDatabase admin
+
+# LOGIN Method 2:
+show dbs
+use admin
+show users
+db.auth("myUserAdmin", passwordPrompt())
+
+# Create additional user
+use test
+db.createUser(
+  {
+    user: "myTester",
+    pwd:  passwordPrompt(),   // or cleartext password
+    roles: [ { role: "readWrite", db: "test" },
+             { role: "read", db: "reporting" } ]
+  }
+)
+mongo -u myTester -p --authenticationDatabase test
+exit
+
+# Change user password
+mongo -u myUserAdmin -p
+use admin
+db.changeUserPassword("myUserAdmin", passwordPrompt())
+
+```
+
+**Backup & Restore**
+
+Users must have role: backup, restore in order to be able to create backups and/or restore backups
+
+```
+# backup all databases on a local machine
+mongodump --out dump_full
+
+
+# backup all databases on a local machine:
+mongodump --host xxx.xxx.x.x --port 27017 --out dump_full 
+
+# backup specific database
+mongodump --db mydb --out dump_mydb
+
+# backup specific collection from specific db
+mongodump --db mydb --collection courses --out dump_mydb_courses
+
+# backup all collections except one or more specific collections
+mongodump --db mydb --excludeCollection=courses --excludeCollection=students --out dump_mydb_specific
+
+# backup all collections except one or more specific collections based on prefix
+mongodump --db mydb --excludeCollectionWithPrefix=temp --out dump_mydb_withprefix
+
+# backup specific documents based on filter for specific collection
+mongodump --db mydb --collection students --query '{"country": {$eq: "NL"}}' --out dump_mydb_nlstudents
+
+# restore local backup and restore at remote host
+mongodump --db mydb | mongorestore --host xxx.xxx.x.x --port 27017
+
+# restore specific dump folder
+mongorestore dump_full
+```
+
 **Start MongoDB without access control:**
 
 ```
