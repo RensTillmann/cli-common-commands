@@ -6,15 +6,29 @@
 # Spin up nodes with docker installed
 # Configure host files on all the nodes so they can communicate with eachother
 vim /etc/hosts
-10.92.250.100 mongodb0
-10.92.250.101 mongodb1
-10.92.250.102 mongodb2
+10.116.0.5 mongodb01
+10.116.0.6 mongodb02
+10.116.0.7 mongodb03
 
-# Start mongo on all nodes
-docker run -d -p 27017:27017 -v data:/data/db mongo --replSet "rs0"
+# Start mongo on all nodes:
+mongod --replSet "rs0" --bind_ip localhost,mongodb01
+mongod --replSet "rs0" --bind_ip localhost,mongodb02
+mongod --replSet "rs0" --bind_ip localhost,mongodb03
+
+# Or with docker (not recommended, should use swarm)
+docker run -d -p 27017:27017 -v data:/data/db mongo --replSet "rs0" --bind_ip localhost,mongodb01
+docker run -d -p 27017:27017 -v data:/data/db mongo --replSet "rs0" --bind_ip localhost,mongodb02
+docker run -d -p 27017:27017 -v data:/data/db mongo --replSet "rs0" --bind_ip localhost,mongodb03
+
+# Open up port for local networks only
+ufw allow proto tcp from 10.116.0.0/20 to 10.116.0.0/20 port 27017 comment 'mongodb'
+
+# Test connection from 01 to 02
+mongo --host mongodb02
+mongo --host mongodb03 --port 27017
 
 # Login to mongo
-mongo --host mongodb0:27017 OR: mongo mongodb://mongodb0:27017
+mongo --host mongodb01:27017 OR: mongo mongodb://mongodb01:27017
 
 # Check replicaset status
 rs.status()
@@ -23,9 +37,9 @@ rs.status()
 rs.initiate( {
    _id : "rs0",
    members: [
-      { _id: 0, host: "mongodb0:27017" },
-      { _id: 1, host: "mongodb1:27017" },
-      { _id: 2, host: "mongodb2:27017" }
+      { _id: 0, host: "mongodb01:27017" },
+      { _id: 1, host: "mongodb02:27017" },
+      { _id: 2, host: "mongodb03:27017" }
    ]
 })
 
@@ -33,7 +47,7 @@ rs.initiate( {
 rs.status()
 
 # Connect to the replica set (rs0)
-mongo 'mongodb://mongodb0,mongodb1,mongodb2/?replicaSet=rs0'
+mongo 'mongodb://mongodb01,mongodb02,mongodb03/?replicaSet=rs0'
 
 # Show status and info
 rs.status()
@@ -45,26 +59,26 @@ rs.conf()
 db.createCollection("helloworld")
 show collections
 exit
-mongo mongodb://mongodb2
+mongo mongodb://mongodb02
 rs.slaveOk()
 show dbs
 show collections
 
 # Test failover
--- Login on current primary node e.g mongodb0
+-- Login on current pexrimary node e.g mongodb01
 docker ps
 docker stop mongo
 exit
 -- Connect to the replica set (rs0)
-mongo 'mongodb://mongodb0,mongodb1,mongodb2/?replicaSet=rs0'
+mongo 'mongodb://mongodb01,mongodb02,mongodb03/?replicaSet=rs0'
 rs.status()
--- Restart mongo on primary node e.g mongodb0
+-- Restart mongo on primary node e.g mongodb01
 docker ps -a
 docker start mongo
 docker ps
 exit
 -- Reconnect to the replica set (rs0)
-mongo 'mongodb://mongodb0,mongodb1,mongodb2/?replicaSet=rs0'
+mongo 'mongodb://mongodb01,mongodb02,mongodb03/?replicaSet=rs0'
 rs.status()
 
 # When everything is setup, we should enable authentication!
