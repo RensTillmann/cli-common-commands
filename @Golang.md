@@ -15,7 +15,7 @@ sudo tar -C /usr/local -xzf go1.14.4.linux-amd64.tar.gz
 # You can do this by adding this line to your /etc/profile (for a system-wide installation) or $HOME/.profile:
 vim ~/.profile
 export GOROOT=/usr/local/go
-export GOPATH=$HOME/Projects/Proj1
+export GOPATH=$HOME/projects/my-project-name
 export PATH=$GOPATH/bin:$GOROOT/bin:$PATH
 
 # Reload variables
