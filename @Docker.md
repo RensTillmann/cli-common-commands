@@ -45,7 +45,7 @@ export HASHED_PASSWORD=$(openssl passwd -apr1 $PASSWORD)
 ### You can check the contents with:
 echo $HASHED_PASSWORD
 ### Create a Traefik service, copy this long command in the terminal:
-
+### Must be v1.7.24 or below, because with v2.0+ it fails to create the service
 docker service create \
     --name traefik \
     --constraint=node.labels.traefik-public.traefik-public-certificates==true \
@@ -63,7 +63,7 @@ docker service create \
     --label "traefik.redirectorservice.frontend.redirect.entryPoint=https" \
     --label "traefik.webservice.frontend.entryPoints=https" \
     --label "traefik.frontend.auth.basic.users=${USERNAME}:${HASHED_PASSWORD}" \
-    traefik:v1.7 \
+    traefik:v1.7.24-alpine \
     --docker \
     --docker.swarmmode \
     --docker.watch \
