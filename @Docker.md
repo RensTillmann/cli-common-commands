@@ -143,3 +143,37 @@ docker node update --availability active workerX
 docker node inspect --pretty workerX
 ```
 
+## Set up a Docker registry
+```
+# Start the registry as a service on your swarm
+docker service create --name registry --publish published=5000,target=5000 registry:2
+# Check registry status
+docker service ls
+# Check that it's working with cURL:
+curl http://localhost:5000/v2/
+```
+
+## Create Image
+```
+# Init modules and use vendor (vgo/dep)
+export GO111MODULE=on
+go mod init
+go mod vendor # if you have vendor/ folder, will automatically integrate
+go build
+
+# Dockerfile
+FROM golang:1.14.4
+ADD . /app
+WORKDIR /app
+ENTRYPOINT ["./main"]
+
+# Build image
+go build && docker build -t api . && docker run -p 443:443 api
+                                     docker run -it --rm --name my-running-app app-image
+
+```
+
+
+
+
+
