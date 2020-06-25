@@ -168,8 +168,13 @@ WORKDIR /app
 ENTRYPOINT ["./main"]
 
 # Build image
-go build && docker build -t api . && docker run -p 443:443 api
+go build && docker build -t <your_username>/repo . && docker run -p 80:8081 <your_username>/repo
                                      docker run -it --rm --name my-running-app app-image
+
+# Push image to Docker hub
+docker login
+docker push <your_username>/repo
+
 
 ```
 
