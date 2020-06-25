@@ -171,10 +171,12 @@ ENTRYPOINT ["./main"]
 go build && docker build -t <your_username>/repo . && docker run -p 80:8081 <your_username>/repo
                                      docker run -it --rm --name my-running-app app-image
 
-# Push image to Docker hub
+# Push image to Docker Hub
 docker login
 docker push <your_username>/repo
 
+# Pull image from Docker Hub
+docker pull <your_username>/repo
 
 ```
 
