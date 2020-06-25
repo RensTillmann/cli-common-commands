@@ -32,7 +32,10 @@ export USE_HOSTNAME=sub.domain.com
 ### (or if you hostname configured)
 export USE_HOSTNAME=$HOSTNAME
 
-You will access the Traefik dashboard at `traefik.<your hostname>`, e.g. `traefik.dog.example.com`. So, make sure that your DNS records point `traefik.<your hostname>` to one of the IPs of the cluster. Better if it is the IP where the Traefik service runs (the manager node you are currently connected to).
+### You will access the Traefik dashboard at `traefik.<your hostname>`, e.g. `traefik.sub.domain.com`. 
+### So, make sure that your DNS records point `traefik.<your hostname>` to one of the IPs of the cluster.
+### Better if it is the IP where the Traefik service runs (the manager node you are currently connected to).
+
 ### Create an environment variable with a username (you will use it for the HTTP Basic Auth), for example:
 export USERNAME=admin
 ### Create an environment variable with the password, e.g.:
@@ -84,7 +87,9 @@ docker service create \
 ### To check if it worked, check the logs:
 docker service logs traefik | less
 
-### And open `https://traefik.<your domain>` in your browser, you will be asked for the username and password that you set up before, and you will be able to see the Traefik web UI interface. Once you deploy a stack, you will be able to see it there and see how the different hosts and paths map to different Docker services / containers.
+### And open `https://traefik.<your domain>` in your browser, you will be asked for the username and password that 
+### you set up before, and you will be able to see the Traefik web UI interface. Once you deploy a stack, 
+### you will be able to see it there and see how the different hosts and paths map to different Docker services / containers.
 
 ```
 
