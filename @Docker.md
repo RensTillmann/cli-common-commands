@@ -1,5 +1,9 @@
 # Create a swarm
 
+## This is a collection of many online documentations/tutorials
+For a quick start refer to this documentation/tutorial:
+https://dockerswarm.rocks/traefik/
+
 ## Docker Swarm Mode and Traefik for an HTTPS cluster
 
 ```
