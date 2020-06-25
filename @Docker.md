@@ -181,6 +181,32 @@ docker pull <your_username>/repo
 ```
 
 
+## Treafik compose example
+```
+version: '3'
 
+services:
+  reverse-proxy:
+    image: traefik:v2.2
+    command: --api.insecure=false --providers.docker
+    ports:
+      # The HTTP port
+      - "80:80"
+      # The Web UI (enabled by --api.insecure=true)
+      - "8080:8080"
+    volumes:
+      # So that Traefik can listen to the Docker events
+      - /var/run/docker.sock:/var/run/docker.sock
 
+  whoami:
+    # A container that exposes an API to show its IP address
+    image: containous/whoami
+    labels:
+      - "traefik.http.routers.whoami.rule=Host(`whoami.docker.localhost`)"
 
+  api:
+    image: renstillmann/app
+    labels:
+      - "traefik.http.routers.api.rule=Host(`api.domain.com`)"
+
+```
