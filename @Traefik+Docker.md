@@ -25,6 +25,10 @@ export NODE_ID=$(docker info -f '{{.Swarm.NodeID}}') &&
 docker node update --label-add traefik-public.traefik-public-certificates=true $NODE_ID && 
 docker stack deploy -c tv3.yml tv3 && 
 docker stack ps tv3
+
+# cURL treafik:
+curl -H Host:traefik.$DOMAIN http://127.0.0.1
+
 ```
 
 **tv3.yml:**
