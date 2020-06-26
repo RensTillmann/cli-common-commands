@@ -16,11 +16,13 @@ export USERNAME=admin &&
 export PASSWORD=admin && 
 export HASHED_PASSWORD=$(openssl passwd -apr1 $PASSWORD) && 
 
-# Deploy the stack (make sure the file trv3.yml exists, see stack compose file below)
+# Create stack compose file (you can also create this file manually, see reference compose file below)
+curl -L dockerswarm.rocks/traefik.yml -o tv3.yml
+
+# Deploy the stack 
 docker network create --driver=overlay traefik-public && 
 export NODE_ID=$(docker info -f '{{.Swarm.NodeID}}') && 
 docker node update --label-add traefik-public.traefik-public-certificates=true $NODE_ID && 
-curl -L dockerswarm.rocks/traefik.yml -o tv3.yml && 
 docker stack deploy -c tv3.yml tv3 && 
 docker stack ps tv3
 ```
