@@ -12,10 +12,10 @@ SSH_PASS="xxxxxx"                       # password file location
 DUMP_FILE="dump.sql"                    # mysql dump filename
 DB_NAME="xxxxxx_db"                     # database name
 DB_USER="xxxxxx_us"                     # database username
-DB_PASS="xxxxxx"                        # database pass
+DB_PASSWORD="xxxxxx"                        # database pass
 DB_NAME_D="wordpress"                   # database name destination server
 DB_USER_D="wordpress"                   # database username destination server
-DB_PASS_D="xxxxxx";                     # database pass destination server
+DB_PASSWORD_D="xxxxxx";                     # database pass destination server
 IMPORT="false"                          # only used on remote connection when importing dump file :)
 
 while [ "$1" != "" ]; do
@@ -36,17 +36,17 @@ then
     cd $DESTINATION_PATH;
     sed -i "s/^.*DB_NAME.*$/define('DB_NAME', '$DB_NAME_D');/" wp-config.php
     sed -i "s/^.*DB_USER.*$/define('DB_USER', '$DB_USER_D');/" wp-config.php
-    sed -i "s/^.*DB_PASS.*$/define('DB_PASS', '$DB_PASS_D');/" wp-config.php
+    sed -i "s/^.*DB_PASSWORD.*$/define('DB_PASSWORD', '$DB_PASSWORD_D');/" wp-config.php
 
     echo "Creating $CONFIG_FILE on destination server";
     cd ~/
     touch $CONFIG_FILE
     echo "[mysqldump]
 user=$DB_USER_D
-password=$DB_PASS_D
+password=$DB_PASSWORD_D
 [mysql]
 user=$DB_USER_D
-password=$DB_PASS_D" > $CONFIG_FILE
+password=$DB_PASSWORD_D" > $CONFIG_FILE
     chmod 440 $CONFIG_FILE
 
     echo "Importing database...";
