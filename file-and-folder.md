@@ -8,6 +8,11 @@
 	
 	mklink /J C:\folder\to\create C:\existing\folder\to\symlink
 	
+**Unzip file:**
+```
+sudo unzip latest.zip -d /var/www
+```
+
 **Copy folder including files:**
 
 	cp -r /home/hope/files/* /home/hope/backup
