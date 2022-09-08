@@ -7,6 +7,12 @@ _Good reference with more info: [https://www.dreamvps.com/tutorials/how-to-use-m
 
 	mysql -u root -p
 
+** Create dump:**
+
+```
+mysqldump -u wp_user –p wp_user_pass [options] db_name db_table > dump.sql
+```
+
 
 **Create new user:**
 
