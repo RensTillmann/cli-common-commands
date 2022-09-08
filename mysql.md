@@ -7,10 +7,16 @@ _Good reference with more info: [https://www.dreamvps.com/tutorials/how-to-use-m
 
 	mysql -u root -p
 
-** Create dump:**
+**Create dump from remote server:**
 
 ```
-mysqldump -u wp_user –p wp_user_pass [options] db_name db_table > dump.sql
+mysqldump --no-tablespaces -P 3310 -h rdbms.strato.de -u username -p dbname > dump.sql
+```
+
+**Create dump on local server:**
+
+```
+mysqldump --no-tablespaces -u username -p dbname > dump.sql
 ```
 
 
