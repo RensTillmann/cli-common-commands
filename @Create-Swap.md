@@ -16,6 +16,18 @@ vm.swappiness=1
 vm.vfs_cache_pressure=50
 ```
 
+## Remove swap
+```
+Deactivate the swap file:
+~#: swapoff -v /swapfile
+
+Remove the /etc/fstab entry.
+~#: vim /etc/fstab
+
+Remove the swapfile:
+~#: rm -f /swapfile
+```
+
 ## Step by step
 
 1. Add swap if necessary
