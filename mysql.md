@@ -19,6 +19,11 @@ mysqldump --no-tablespaces -P 3310 -h rdbms.strato.de -u username -p dbname > du
 mysqldump --no-tablespaces -u username -p dbname > dump.sql
 ```
 
+**Import MySQL dumb file:**
+
+```
+mysql -h localhost -u user_us -D database_db -p < /var/www/vhosts/domain.com/httpdocs/dump.sql
+```
 
 **Create new user:**
 
@@ -53,11 +58,6 @@ mysqldump --no-tablespaces -u username -p dbname > dump.sql
 **List all the fields in the mysql.user table:**
 
 	desc mysql.user;
-
-
-**Import MySQL dumb file:**
-
-	mysql -h localhost -u user_us -D database_db -p < /var/www/vhosts/domain.com/httpdocs/dump.sql
 
 
 **Restart MySQL:**
