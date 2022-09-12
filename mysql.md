@@ -19,11 +19,19 @@ mysqldump --no-tablespaces -P 3310 -h rdbms.strato.de -u username -p dbname > du
 mysqldump --no-tablespaces -u username -p dbname > dump.sql
 ```
 
+**Copy over to other host:**
+
+```
+Local to remote: scp /var/www/html/dump.sql root@1.2.3.4:/var/www/html
+Remote to local: scp root@1.2.3.4:/var/www/html/dump.sql /var/www/html
+```
+
 **Import MySQL dumb file:**
 
 ```
 mysql -h localhost -u user_us -D database_db -p < /var/www/vhosts/domain.com/httpdocs/dump.sql
 ```
+
 
 **Create new user:**
 
